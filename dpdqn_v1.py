@@ -2,7 +2,7 @@ import gym
 import sys
 import os
 import numpy as np
-from tqdm import trange
+
 from IPython.display import clear_output
 import matplotlib.pyplot as plt
 import random
@@ -14,6 +14,34 @@ from replay_buffer import ReplayBuffer
 sys.setrecursionlimit(10000)
 import utils
 import copy
+from ray import tune
+from ray.tune import track
+import math
+from tqdm import trange
+
+def remap( x, oMin, oMax, nMin, nMax ):
+    reverseInput = False
+    oldMin = min( oMin, oMax )
+    oldMax = max( oMin, oMax )
+    if not oldMin == oMin:
+        reverseInput = True
+
+    reverseOutput = False
+    newMin = min( nMin, nMax )
+    newMax = max( nMin, nMax )
+    if not newMin == nMin :
+        reverseOutput = True
+
+    portion = (x-oldMin)*(newMax-newMin)/(oldMax-oldMin)
+    if reverseInput:
+        portion = (oldMax-x)*(newMax-newMin)/(oldMax-oldMin)
+
+    result = portion + newMin
+    if reverseOutput:
+        result = newMax - portion
+
+    return math.floor(result)
+
 
 class Flatten(nn.Module):
     def __init__(self):
@@ -22,28 +50,36 @@ class Flatten(nn.Module):
     def forward(self, x):
         return x.view(x.size(0), -1)
 
+class ActionLossFunc(torch.nn.Module):
+
+    def forward(self, y: torch.Tensor) -> torch.Tensor:
+        loss = torch.sum(-y)
+        return loss
+
 class BQNAgent(nn.Module):
-    def __init__(self, observation_space, action_space):
+    def __init__(self, observation_space, action_space,
+                 hidden_size1, hidden_size2, greedy_lr, greedy_opt_steps):
         super().__init__()
         self.action_space = action_space
         self.observation_space = observation_space
 
         self.flatten = Flatten()
 
-        self.hid = nn.Linear(len(self.action_space.low) + len(self.observation_space.low), 64)
-        self.hid2 = nn.Linear(64, 16)
-        self.hid3 = nn.Linear(16, 1)
+        self.action = torch.ones((1, len(self.action_space.low)), requires_grad=True)
+        self.action.requires_grad = True
+        self.greedy_lr=greedy_lr
+        self.greedy_opt_steps=greedy_opt_steps
+
+        # self.statedim = 1
+        # for x in self.observation_space.shape:
+        #     self.statedim*=x
+        #self.hid = nn.Linear(len(self.action_space.low) + self.statedim, hidden_size1)
+        self.hid = nn.Linear(len(self.action_space.low) + len(self.observation_space.low), hidden_size1)
+        self.hid2 = nn.Linear(hidden_size1, hidden_size2)
+        self.hid3 = nn.Linear(hidden_size2, 1)
 
     def forward(self, states_t, actions_t):
-        """
-        TODO update
-        takes agent's observation (tensor) and actions (tensor), returns qvalues (tensor)
-        :param state_t: shape = [batch_size, 8]
-        :param actions_t: shape = [batch_size, 2]
-        """
-        # Use your network to compute qvalues for given state
-
-        # state_t = self.flatten(state_t) # if we have more complex state (image for example)
+        #states_t = self.flatten(states_t) # if we have more complex state (image for example)
         x = torch.cat((states_t, actions_t), dim=1)
 
         x = F.relu(self.hid(x))
@@ -51,55 +87,84 @@ class BQNAgent(nn.Module):
         x = self.hid3(x)
         qvalue = x
 
-        assert qvalue.requires_grad, "qvalue must be a torch tensor with grad"
-
         return qvalue
 
-    def get_action(self, state, greedy=False):
-        # stochastic exploration with randomly generated actions, more samples->more determenistic prediction
-        # todo: for greedy use backprop to optimize input for the best sample
-        RAND_SAMPLES = 10
-        #actions = torch.rand((RAND_SAMPLES, len(self.action_space.low)))
-        #actions = torch.zeros((RAND_SAMPLES, len(self.action_space.low)))
-        # todo: normal fit to environment constraints for action space
+    def get_action(self, state, greedy=False, num_action_samples=10):
+
         action_array = []
-        for i in range(RAND_SAMPLES):
+        states = []
+
+        for i in range(num_action_samples):
             action_array.append(self.action_space.sample())
+            states.append(state)
 
         model_device = next(self.parameters()).device
         actions = torch.tensor(action_array, device=model_device, dtype=torch.float)
-
-        # todo shitty code RAND_SAMPLES
-        states = [state, state, state, state, state, state, state, state, state, state]
         states = torch.tensor(states, device=model_device, dtype=torch.float)
 
-        qvalues = self.forward(states, actions)
+        q_values = self.forward(states, actions)
 
-        action = actions[qvalues.argmax()].data.cpu().numpy()
+        best_action = actions[q_values.argmax()]
 
+        if greedy==True:
+            loss_fn = ActionLossFunc()
+            for param in self.parameters():
+                param.requires_grad = False
+            state_tensor = torch.tensor([state], device=model_device, dtype=torch.float)
+
+            self.action = torch.stack([best_action])
+            self.action.requires_grad = True
+            self.action.data.clamp_(min=self.action_space.low[0], max=self.action_space.high[0])
+
+            for int_opt in range(self.greedy_opt_steps):
+                q_value = self.forward(state_tensor, self.action)
+                loss = loss_fn(q_value)
+                loss.backward()
+
+                with torch.no_grad():
+                    self.action -= self.greedy_lr * self.action.grad
+
+
+                self.action.data.clamp_(min=self.action_space.low[0], max=self.action_space.high[0])
+                self.action.grad.zero_()
+
+            self.action.requires_grad = False
+            for param in self.parameters():
+                param.requires_grad = True
+
+            best_action=self.action[0]
+
+
+        action = best_action.data.cpu().numpy()
         return action
 
 class DPDQN1:
-
-    def __init__(self, env, verbose=0,
-                 replay_size=5000, lr=1e-4, batch_size=16, total_steps=3 * 10 ** 6,
-                 decay_steps = 10 ** 6, refresh_target_network_freq = 3000, max_grad_norm=50,
-                 gamma=0.99, warm_up=2000,
-                 actions_per_sampling = 10, hidden_size1 = 64, hidden_size2=16,
-                 opt_steps_per_step=2):
+    def __init__(self, env, verbose=0, ray_tune=False,
+                 replay_size=5000, lr=1e-4, batch_size=16,
+                 refresh_target_network_freq = 3000, max_grad_norm=50,
+                 gamma=0.99, hidden_size1 = 64, hidden_size2=16, opt_steps_per_step=2,
+                 num_action_samples=9, num_action_samples_final=11,
+                 greedy_lr=0.05, greedy_opt_steps=5, warm_up=2000):
         self.env = env
         self.verbose = verbose
+        self.ray_tune = ray_tune
+
         self.opt_steps_per_step=opt_steps_per_step
         self.gamma = gamma
         self.batch_size = batch_size
-        self.total_steps = total_steps
-        self.decay_steps = decay_steps
         self.refresh_target_network_freq = refresh_target_network_freq
         self.max_grad_norm = max_grad_norm
         self.warm_up = warm_up
         self.replay_size = replay_size
         self.lr = lr
+        self.num_action_samples = num_action_samples
+        self.num_action_samples_final = num_action_samples_final
 
+        self.hidden_size1=hidden_size1
+        self.hidden_size2 = hidden_size2
+
+        self.greedy_lr=greedy_lr
+        self.greedy_opt_steps=greedy_opt_steps
         self.prepare_network()
 
 
@@ -107,21 +172,21 @@ class DPDQN1:
     def prepare_network(self):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        self.agent = BQNAgent(self.env.observation_space, self.env.action_space).to(self.device)
-        self.target_network = BQNAgent(self.env.observation_space, self.env.action_space).to(self.device)
+        self.agent = BQNAgent(self.env.observation_space, self.env.action_space, self.hidden_size1, self.hidden_size2, self.greedy_lr, self.greedy_opt_steps).to(self.device)
+        self.target_network = BQNAgent(self.env.observation_space, self.env.action_space, self.hidden_size1, self.hidden_size2, self.greedy_lr, self.greedy_opt_steps).to(self.device)
 
         self.exp_replay = ReplayBuffer(self.replay_size)
 
         self.opt = torch.optim.Adam(self.agent.parameters(), lr=self.lr)
 
 
-    def evaluate(self, n_games=1, greedy=False, t_max=10000):
+    def evaluate(self, n_games=1, greedy=True, t_max=10000):
         rewards = []
         for _ in range(n_games):
             s = self.env.reset()
             reward = 0
             for _ in range(t_max):
-                action = self.predict(s, greedy=True)[0]
+                action = self.predict(s, greedy=greedy, num_action_samples=20)[0]
                 s, r, done, _ = self.env.step(action)
                 reward += r
                 if done:
@@ -142,12 +207,19 @@ class DPDQN1:
         self.target_network.load_state_dict(self.agent.state_dict())
         state = self.env.reset()
 
-        total_timesteps=total_timesteps-self.warm_up
-        _, state = self.play_and_record(state, n_steps=self.warm_up)
+        _, state = self.play_and_record(state, n_steps=self.warm_up, current_exploration_actions=3)
 
         state = self.env.reset()
-        for step in trange(total_timesteps + 1):
-            _, state = self.play_and_record(state)
+
+        if self.verbose==0:
+            trange = range
+        else:
+            from tqdm import trange
+
+        for step in trange(total_timesteps-self.warm_up + 1):
+            current_exploration_actions = remap(step, 0, total_timesteps-self.warm_up+2, self.num_action_samples, self.num_action_samples_final)
+
+            _, state = self.play_and_record(state, current_exploration_actions=current_exploration_actions)
 
             s_, a_, r_, next_s_, done_ = self.exp_replay.sample(self.batch_size)
 
@@ -167,10 +239,11 @@ class DPDQN1:
                 self.target_network.load_state_dict(self.agent.state_dict())
 
             if step % eval_freq == 0:
-                mean_rw_history.append(self.evaluate(
-                    n_games=3, greedy=True, t_max=1000)
-                )
+                mean_rw_history.append(self.evaluate(n_games=3, greedy=True, t_max=10000))
+                if self.ray_tune:
+                    tune.track.log(mean_reward=mean_rw_history[-1])
 
+            if self.verbose and step % eval_freq == 0:
                 clear_output(True)
 
                 plt.figure(figsize=[16, 9])
@@ -179,7 +252,6 @@ class DPDQN1:
                 plt.plot(mean_rw_history)
                 plt.grid()
 
-                assert not np.isnan(td_loss_history[-1])
                 plt.subplot(2, 2, 2)
                 plt.title("TD loss history (smoothened)")
                 plt.plot(utils.smoothen(td_loss_history))
@@ -198,8 +270,8 @@ class DPDQN1:
                 plt.show()
 
 
-    def predict(self, obs, greedy=False):
-        action = self.agent.get_action(obs, greedy=greedy)
+    def predict(self, obs, greedy=False, num_action_samples=10):
+        action = self.agent.get_action(obs, greedy=greedy, num_action_samples=num_action_samples)
         return action, None
 
     def save(self, filename):
@@ -222,7 +294,12 @@ class DPDQN1:
         return model
 
 
-    def compute_td_loss(self, states, actions, rewards, next_states_np, is_done, ):
+    def compute_td_loss(self, states, actions, rewards, next_states_np, is_done):
+        # for param in self.target_network.parameters():
+        #     param.requires_grad = False
+        # for param in self.agent.parameters():
+        #     param.requires_grad = True
+
         states = torch.tensor(states, device=self.device, dtype=torch.float)
         actions = torch.tensor(actions, device=self.device, dtype=torch.float)
         rewards = torch.tensor(rewards, device=self.device, dtype=torch.float)
@@ -247,14 +324,15 @@ class DPDQN1:
 
         return loss
 
-    def play_and_record(self, initial_state, n_steps=1):
+    def play_and_record(self, initial_state, n_steps=1, current_exploration_actions=10):
         s = initial_state
-        if self.env.needs_reset:
-            s = self.env.reset()
+        if hasattr(self.env, "needs_reset"):
+            if self.env.needs_reset:
+                s = self.env.reset()
         sum_rewards = 0
 
         for t in range(n_steps):
-            a = self.predict(s)[0]
+            a = self.predict(s, num_action_samples=current_exploration_actions, greedy=False)[0]
             next_s, r, done, _ = self.env.step(a)
 
             self.exp_replay.add(s, a, r, next_s, done)

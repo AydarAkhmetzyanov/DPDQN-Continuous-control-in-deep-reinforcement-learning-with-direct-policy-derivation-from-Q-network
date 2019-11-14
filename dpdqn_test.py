@@ -7,7 +7,7 @@ if __name__ == "__main__":
     import numpy as np
     import matplotlib.pyplot as plt
     plt.rcParams['figure.figsize'] = [15, 10]
-    time_steps = 1e5 #testrun
+    time_steps = 1e4 #testrun
     #time_steps = 100000 #for prod or even more *10?100?
     time_steps_test = int(time_steps/10)
 
@@ -26,7 +26,9 @@ if __name__ == "__main__":
 
 
     #train
-    envname="LunarLanderContinuous-v2"
+    envname = "Pendulum-v0"
+    envname = "LunarLanderContinuous-v2"
+    envname = "BipedalWalker-v2"
     env = gym.make(envname)
     exp_name=env.spec._env_name+'-DPDQN1'
 
@@ -53,6 +55,25 @@ if __name__ == "__main__":
 
 
     # test
+
+    env = gym.make(envname)
+    log_dir = 'logs_test/' + exp_name
+    env = Monitor(env, log_dir, allow_early_resets=True)
+
+    model = DPDQN1.load("models/" + log_dir.split("/")[1], env)
+    obs = env.reset()
+    for i in range(time_steps_test):
+        if env.needs_reset:
+            obs = env.reset()
+        action, _states = model.predict(obs, greedy=False)
+        obs, rewards, dones, info = env.step(action)
+        #env.render()
+
+    copyfile(log_dir + ".monitor.csv", "logs_tmp/tmp.monitor.csv")
+    results_plotter.plot_results(["logs_tmp"], time_steps, results_plotter.X_TIMESTEPS, log_dir.split("/")[1])
+    plt.show()
+
+    # test greedy
 
     env = gym.make(envname)
     log_dir = 'logs_test/' + exp_name

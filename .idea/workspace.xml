@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4591db21-b837-4143-b10b-a381d070d7b6" name="Default Changelist" comment="" />
+    <list default="true" id="4591db21-b837-4143-b10b-a381d070d7b6" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.ipynb_checkpoints/baseline_execution_DPDQN1-BipedalWalker-v2-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.ipynb_checkpoints/baseline_execution_DPDQN1-LunarLanderContinuous-v2-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.ipynb_checkpoints/baseline_execution_DPDQN1_Pendulum-v0-checkpoint.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baseline_execution_DPDQN1-BipedalWalker-v2.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baseline_execution_DPDQN1-LunarLanderContinuous-v2.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/baseline_execution_DPDQN1_Pendulum-v0.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dpdqn_greedy_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs_test/BipedalWalker-DPDQN1.monitor.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs_test/LunarLanderContinuous-DPDQN1_greedy.monitor.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/logs_test/LunarLanderContinuous.monitor.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/BipedalWalker-DPDQN1.agent" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/BipedalWalker-DPDQN1.p" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ray_exp_tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/baseline_execution_DPDQN1-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/ray_tests-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline_execution_DPDQN1.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dpdqn_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/dpdqn_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dpdqn_v1.py" beforeDir="false" afterPath="$PROJECT_DIR$/dpdqn_v1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs_test/LunarLanderContinuous-DPDQN1.monitor.csv" beforeDir="false" afterPath="$PROJECT_DIR$/logs_test/LunarLanderContinuous-DPDQN1.monitor.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs_test/Pendulum-DPDQN1.monitor.csv" beforeDir="false" afterPath="$PROJECT_DIR$/logs_test/Pendulum-DPDQN1.monitor.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs_tmp/tmp.monitor.csv" beforeDir="false" afterPath="$PROJECT_DIR$/logs_tmp/tmp.monitor.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs_train/LunarLanderContinuous-DPDQN1.monitor.csv" beforeDir="false" afterPath="$PROJECT_DIR$/logs_train/LunarLanderContinuous-DPDQN1.monitor.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs_train/Pendulum-DPDQN1.monitor.csv" beforeDir="false" afterPath="$PROJECT_DIR$/logs_train/Pendulum-DPDQN1.monitor.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/LunarLanderContinuous-DPDQN1.agent" beforeDir="false" afterPath="$PROJECT_DIR$/models/LunarLanderContinuous-DPDQN1.agent" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/LunarLanderContinuous-DPDQN1.p" beforeDir="false" afterPath="$PROJECT_DIR$/models/LunarLanderContinuous-DPDQN1.p" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Pendulum-DPDQN1.agent" beforeDir="false" afterPath="$PROJECT_DIR$/models/Pendulum-DPDQN1.agent" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/Pendulum-DPDQN1.p" beforeDir="false" afterPath="$PROJECT_DIR$/models/Pendulum-DPDQN1.p" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ray_tests.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tune_results.p" beforeDir="false" afterPath="$PROJECT_DIR$/tune_results.p" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,11 +48,14 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/gym" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1TQqZ7FaUfdcponygwhmfh9NPug" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -44,7 +79,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.ray_exp_tests">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="backprop q learning research" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -89,9 +124,49 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="dpdqn_greedy_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="backprop q learning research" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dpdqn_greedy_test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ray_exp_tests" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="backprop q learning research" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ray_exp_tests.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.ray_exp_tests" />
         <item itemvalue="Python.cdqn_test" />
+        <item itemvalue="Python.dpdqn_greedy_test" />
       </list>
     </recent_temporary>
   </component>
@@ -106,7 +181,8 @@
       <option name="presentableId" value="Default" />
       <updated>1573402719534</updated>
       <workItem from="1573402720815" duration="258000" />
-      <workItem from="1573403009704" duration="21713000" />
+      <workItem from="1573403009704" duration="26735000" />
+      <workItem from="1573646205662" duration="20709000" />
     </task>
     <servers />
   </component>
@@ -126,7 +202,19 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="self.action" />
+      </configuration>
+    </watches-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/backprop_q_learning_research$cdqn_test.coverage" NAME="cdqn_test Coverage Results" MODIFIED="1573597563201" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/backprop_q_learning_research$dpdqn_greedy_test.coverage" NAME="dpdqn_greedy_test Coverage Results" MODIFIED="1573664830978" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/backprop_q_learning_research$ray_exp_tests.coverage" NAME="ray_exp_tests Coverage Results" MODIFIED="1573689359545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/backprop_q_learning_research$cdqn_test.coverage" NAME="cdqn_test Coverage Results" MODIFIED="1573686544800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

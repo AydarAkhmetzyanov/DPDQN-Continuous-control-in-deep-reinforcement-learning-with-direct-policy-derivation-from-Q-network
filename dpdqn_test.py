@@ -1,5 +1,5 @@
 if __name__ == "__main__":
-    from dpdqn_v1 import DPDQN1
+    from dpdqn_v2 import DPDQN2
 
     import os
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -18,6 +18,7 @@ if __name__ == "__main__":
     os.makedirs("logs_test", exist_ok=True)
     os.makedirs("logs_train", exist_ok=True)
     os.makedirs("logs_tmp", exist_ok=True)
+    os.makedirs("logs_dev", exist_ok=True)
     from shutil import copyfile
     from utils import *
 
@@ -30,12 +31,12 @@ if __name__ == "__main__":
     envname = "LunarLanderContinuous-v2"
     envname = "BipedalWalker-v2"
     env = gym.make(envname)
-    exp_name=env.spec._env_name+'-DPDQN1'
+    exp_name=env.spec._env_name+'-DPDQN2'
 
-    log_dir='logs_train/'+exp_name
+    log_dir='logs_dev/'+exp_name
     env = Monitor(env, log_dir, allow_early_resets=True)
 
-    model = DPDQN1(env, verbose=1)
+    model = DPDQN2(env, verbose=1)
 
     print("time_steps_todo: "+str(time_steps))
     model.learn(total_timesteps=int(time_steps))
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     log_dir = 'logs_test/' + exp_name
     env = Monitor(env, log_dir, allow_early_resets=True)
 
-    model = DPDQN1.load("models/" + log_dir.split("/")[1], env)
+    model = DPDQN2.load("models/" + log_dir.split("/")[1], env)
     obs = env.reset()
     for i in range(time_steps_test):
         if env.needs_reset:
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     log_dir = 'logs_test/' + exp_name
     env = Monitor(env, log_dir, allow_early_resets=True)
 
-    model = DPDQN1.load("models/" + log_dir.split("/")[1], env)
+    model = DPDQN2.load("models/" + log_dir.split("/")[1], env)
     obs = env.reset()
     for i in range(time_steps_test):
         if env.needs_reset:

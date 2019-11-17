@@ -144,7 +144,7 @@ class DPDQN1:
                  refresh_target_network_freq = 3000, max_grad_norm=50,
                  gamma=0.99, hidden_size1 = 64, hidden_size2=16, opt_steps_per_step=2,
                  num_action_samples=9, num_action_samples_final=11,
-                 greedy_lr=0.05, greedy_opt_steps=5, warm_up=2000):
+                 greedy_lr=0.05, greedy_opt_steps=0, warm_up=2000):
         self.env = env
         self.verbose = verbose
         self.ray_tune = ray_tune
@@ -186,7 +186,7 @@ class DPDQN1:
             s = self.env.reset()
             reward = 0
             for _ in range(t_max):
-                action = self.predict(s, greedy=greedy, num_action_samples=20)[0]
+                action = self.predict(s, greedy=greedy, num_action_samples=30)[0]
                 s, r, done, _ = self.env.step(action)
                 reward += r
                 if done:
@@ -216,7 +216,7 @@ class DPDQN1:
         else:
             from tqdm import trange
 
-        for step in trange(total_timesteps-self.warm_up + 1):
+        for step in trange(total_timesteps-self.warm_up):
             current_exploration_actions = remap(step, 0, total_timesteps-self.warm_up+2, self.num_action_samples, self.num_action_samples_final)
 
             _, state = self.play_and_record(state, current_exploration_actions=current_exploration_actions)
@@ -238,7 +238,8 @@ class DPDQN1:
             if step % self.refresh_target_network_freq == 0:
                 self.target_network.load_state_dict(self.agent.state_dict())
 
-            if step % eval_freq == 0:
+            #skip for verbose
+            if self.verbose and step % eval_freq == 0:
                 mean_rw_history.append(self.evaluate(n_games=3, greedy=True, t_max=10000))
                 if self.ray_tune:
                     tune.track.log(mean_reward=mean_rw_history[-1])

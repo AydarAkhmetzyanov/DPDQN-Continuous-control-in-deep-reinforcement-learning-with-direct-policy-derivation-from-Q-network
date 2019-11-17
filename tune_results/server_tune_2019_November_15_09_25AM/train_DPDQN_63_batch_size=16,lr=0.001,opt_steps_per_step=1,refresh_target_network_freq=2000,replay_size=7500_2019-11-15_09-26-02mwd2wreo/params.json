@@ -1,0 +1,7 @@
+{
+  "batch_size": 16,
+  "lr": 0.001,
+  "opt_steps_per_step": 1,
+  "refresh_target_network_freq": 2000,
+  "replay_size": 7500
+}

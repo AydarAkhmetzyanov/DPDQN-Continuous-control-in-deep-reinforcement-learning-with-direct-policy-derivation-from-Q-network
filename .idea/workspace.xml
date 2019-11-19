@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="4591db21-b837-4143-b10b-a381d070d7b6" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/~$ntinuous control in deep reinforcement learning with direct policy derivation from Q network.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Akhmetzyanov_ Aydar_222_publishable.doc" beforeDir="false" afterPath="$PROJECT_DIR$/Akhmetzyanov_ Aydar_222_publishable.doc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseline_execution_DPDQN2-BipedalWalker-v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/baseline_execution_DPDQN2-BipedalWalker-v2.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dpdqn_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/dpdqn_v2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs_train/BipedalWalker-DPDQN2.monitor.csv" beforeDir="false" afterPath="$PROJECT_DIR$/logs_train/BipedalWalker-DPDQN2.monitor.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -170,6 +173,9 @@
       <workItem from="1573942604298" duration="17000" />
       <workItem from="1573981299407" duration="1005000" />
       <workItem from="1574001835586" duration="2872000" />
+      <workItem from="1574067182512" duration="600000" />
+      <workItem from="1574116097598" duration="8000" />
+      <workItem from="1574116209789" duration="28000" />
     </task>
     <servers />
   </component>

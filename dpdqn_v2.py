@@ -147,8 +147,8 @@ class DPDQN2:
     def __init__(self, env, verbose=0, ray_tune=False, progress_bar = False,
                  replay_size=5000, lr=1e-4, batch_size=16,
                  refresh_target_network_freq=3000, max_grad_norm=50,
-                 gamma=0.99, hidden_size1=64, hidden_size2=16, opt_steps_per_step=2,
-                 num_action_samples=9, num_action_samples_final=11,
+                 gamma=0.99, hidden_size1=64, hidden_size2=32, opt_steps_per_step=1,
+                 num_action_samples=9, num_action_samples_final=19,
                  greedy_lr=0.05, greedy_opt_steps=0, warm_up=2000):
         self.env = env
 
